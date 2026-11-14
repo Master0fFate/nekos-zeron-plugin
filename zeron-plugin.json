@@ -1,0 +1,232 @@
+{
+  "id": "nekos-api-anime-images",
+  "name": "Nekos Anime Images",
+  "version": "2.0.0",
+  "description": "Native Nekos image panel, slideshow, and gallery for Zeron v3.",
+  "icon": "icon.svg",
+  "entry": "init.luau",
+  "permissions": [
+    "ui.add",
+    "pages.add",
+    "navigate",
+    "links.open",
+    "network",
+    "clipboard",
+    "files",
+    "panel.tabs",
+    "web"
+  ],
+  "network": {
+    "hosts": [
+      "api.nekosapi.com",
+      "cdn.nekosapi.com",
+      "s3.nyeki.dev"
+    ]
+  },
+  "settings_description": "Choose which images to load and how to show them. Nekos API ratings can be inaccurate.",
+  "settings": [
+    {
+      "id": "enable_nsfw",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Enable NSFW",
+      "description": "Allow the non-safe ratings selected below. API ratings can be inaccurate.",
+      "default": false
+    },
+    {
+      "id": "safe",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Safe images",
+      "default": true
+    },
+    {
+      "id": "suggestive",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Suggestive images",
+      "description": "Requires Enable NSFW.",
+      "default": false
+    },
+    {
+      "id": "borderline",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Borderline images",
+      "description": "Requires Enable NSFW.",
+      "default": false
+    },
+    {
+      "id": "explicit",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Explicit images",
+      "description": "Requires Enable NSFW.",
+      "default": false
+    },
+    {
+      "id": "hide_nsfw",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Hide NSFW previews",
+      "description": "Load the preview only after you select Reveal image.",
+      "default": true
+    },
+    {
+      "id": "blur_nsfw",
+      "kind": "switch",
+      "section": "Content filters",
+      "label": "Blur NSFW thumbnails",
+      "description": "Blur gallery thumbnails when NSFW previews are visible.",
+      "default": true
+    },
+    {
+      "id": "included_tags",
+      "kind": "text",
+      "section": "Image filters",
+      "label": "Included tags",
+      "description": "Separate tags with commas.",
+      "placeholder": "landscape, sky",
+      "default": ""
+    },
+    {
+      "id": "excluded_tags",
+      "kind": "text",
+      "section": "Image filters",
+      "label": "Excluded tags",
+      "description": "Separate tags with commas. Zeron filters the results locally.",
+      "placeholder": "kemonomimi",
+      "default": ""
+    },
+    {
+      "id": "artist",
+      "kind": "text",
+      "section": "Image filters",
+      "label": "Artist",
+      "description": "Leave blank to include all artists.",
+      "placeholder": "Artist name",
+      "default": ""
+    },
+    {
+      "id": "limit",
+      "kind": "number",
+      "section": "Image filters",
+      "label": "Images per request",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "id": "deduplicate",
+      "kind": "switch",
+      "section": "Image filters",
+      "label": "Avoid duplicate images",
+      "description": "Skip images already shown during this gallery session.",
+      "default": true
+    },
+    {
+      "id": "mode",
+      "kind": "choice",
+      "style": "segmented",
+      "section": "Display",
+      "label": "View",
+      "options": [
+        {
+          "value": "gallery",
+          "label": "Gallery"
+        },
+        {
+          "value": "single",
+          "label": "Single Image"
+        }
+      ],
+      "default": "gallery"
+    },
+    {
+      "id": "auto_refresh",
+      "kind": "switch",
+      "section": "Display",
+      "label": "Auto-refresh",
+      "description": "Refresh while the gallery is visible.",
+      "default": false
+    },
+    {
+      "id": "refresh_interval",
+      "kind": "number",
+      "section": "Display",
+      "label": "Refresh interval",
+      "min": 5,
+      "max": 3600,
+      "step": 1,
+      "unit": "seconds",
+      "default": 60
+    },
+    {
+      "id": "auto_more",
+      "kind": "switch",
+      "section": "Display",
+      "label": "Auto-load more images",
+      "description": "Load the next batch near the end of the gallery.",
+      "default": false
+    },
+    {
+      "id": "metadata",
+      "kind": "switch",
+      "section": "Display",
+      "label": "Show metadata",
+      "default": true
+    },
+    {
+      "id": "aspect",
+      "kind": "switch",
+      "section": "Display",
+      "label": "Preserve image aspect ratio",
+      "description": "Fit the full image inside its preview.",
+      "default": true
+    },
+    {
+      "id": "download_format",
+      "kind": "choice",
+      "style": "segmented",
+      "section": "Display",
+      "label": "Download format",
+      "description": "Original preserves the image bytes. PNG/JPEG conversion uses Zeron\u2019s built-in web view.",
+      "options": [
+        {
+          "value": "original",
+          "label": "Original"
+        },
+        {
+          "value": "png",
+          "label": "PNG"
+        },
+        {
+          "value": "jpeg",
+          "label": "JPEG"
+        }
+      ],
+      "default": "original"
+    },
+    {
+      "id": "floating_autoplay",
+      "kind": "switch",
+      "section": "Image panel",
+      "label": "Slideshow",
+      "description": "Advance through the batch while the native image panel is visible. Off keeps one image.",
+      "default": false
+    },
+    {
+      "id": "floating_interval",
+      "kind": "number",
+      "section": "Image panel",
+      "label": "Slideshow interval",
+      "description": "Time each image stays on screen.",
+      "min": 1,
+      "max": 3600,
+      "step": 1,
+      "unit": "seconds",
+      "default": 10
+    }
+  ]
+}
