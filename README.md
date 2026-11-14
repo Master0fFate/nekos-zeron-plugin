@@ -4,24 +4,48 @@ Version **2.1.0**. A native image panel, slideshow, and gallery for Zeron's desk
 
 **No Python, Pillow, Tkinter, npm packages, external programs, or new runtime dependencies.** The plugin uses Luau, Zeron's SDK, zgx image rendering, and Zeron's existing web view for image export. It does not request permission to run commands.
 
-## Install or update
+## Install or update on Windows, macOS, or Linux
+
+Use the Zeron desktop app for your operating system. If you need to install it, get it from [Zeron Releases](https://github.com/zeronsh/zeron/releases). Open the `.dmg` on macOS, run the setup `.exe` on Windows, or extract the Linux archive and run its `install.sh`.
 
 1. Download the [source ZIP](https://github.com/Master0fFate/nekos-zeron-plugin/archive/refs/heads/main.zip) and extract it.
 2. In Zeron, go to **Settings → Plugins** and open the plugins folder.
 3. Disable the old plugin if it is installed. Copy the extracted folder into the plugins folder and name it `nekos-api-anime-images`. Replace the old folder in full. Keep `zeron-plugin.json` and `init.luau` at the top level of the plugin folder.
-4. Enable **Nekos Anime Images** and review its permissions. Select it in the sidebar, then select **Open panel**.
+4. If Zeron requires a signature, follow the steps below. Then enable **Nekos Anime Images** and review its permissions. Select it in the sidebar, then select **Open panel**.
 
-This download contains source files. If Zeron requires a signature, keep Zeron open and run this command in Windows Command Prompt after you copy the folder.
+### Sign the plugin if required
+
+Keep Zeron open. After you copy the plugin folder, run the command for your operating system.
+
+**Windows (Command Prompt)**
 
 ```bat
 start "" /wait "%LOCALAPPDATA%\Programs\Zeron\zeron.exe" plugin sign nekos-api-anime-images
 ```
 
+**macOS (Terminal)**
+
+```sh
+/Applications/Zeron.app/Contents/MacOS/zeron plugin sign nekos-api-anime-images
+```
+
+If you installed `Zeron.app` in a different folder, adjust the path.
+
+**Linux (terminal)**
+
+```sh
+zeron plugin sign nekos-api-anime-images
+```
+
+If `zeron` is outside your `PATH`, use the full path to the executable installed by the desktop installer.
+
 For a signed package that you can use in the **Install…** dialog, see `zeron plugin export --help`.
 
 ## Showcase
 
-[Watch the 24-second showcase (MP4)](showcase/nekos-showcase.mp4). This simulated demo uses the plugin's native UI components, Nekos API images, and an original instrumental.
+https://github.com/user-attachments/assets/60b6c285-b92c-43f2-b02c-90398676735f
+
+This 24-second simulated demo uses the plugin's native UI components, Nekos API images, and an original instrumental.
 
 ## Native image panel
 
