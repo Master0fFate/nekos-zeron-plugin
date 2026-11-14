@@ -1,7 +1,7 @@
 {
   "id": "nekos-api-anime-images",
   "name": "Nekos Anime Images",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Native Nekos image panel, slideshow, and gallery for Zeron v3.",
   "icon": "icon.svg",
   "entry": "init.luau",
@@ -141,14 +141,15 @@
           "label": "Single Image"
         }
       ],
-      "default": "gallery"
+      "default": "gallery",
+      "description": "Applies to the gallery page and the image panel."
     },
     {
       "id": "auto_refresh",
       "kind": "switch",
       "section": "Display",
       "label": "Auto-refresh",
-      "description": "Refresh while the gallery is visible.",
+      "description": "Fetch new images while a gallery or image panel is visible.",
       "default": false
     },
     {
@@ -191,7 +192,7 @@
       "style": "segmented",
       "section": "Display",
       "label": "Download format",
-      "description": "Original preserves the image bytes. PNG/JPEG conversion uses Zeron\u2019s built-in web view.",
+      "description": "Original preserves the image bytes. PNG/JPEG conversion uses Zeron’s built-in web view.",
       "options": [
         {
           "value": "original",
@@ -212,8 +213,8 @@
       "id": "floating_autoplay",
       "kind": "switch",
       "section": "Image panel",
-      "label": "Slideshow",
-      "description": "Advance through the batch while the native image panel is visible. Off keeps one image.",
+      "label": "Start slideshow automatically",
+      "description": "Starting playback default. Changes also start or stop playback now. Use Play/Pause for the saved live control.",
       "default": false
     },
     {

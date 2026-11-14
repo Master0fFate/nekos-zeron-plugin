@@ -41,6 +41,7 @@ return function(zeron: any, options: any?)
 	local cooling = state(false)
 	local revealed = state({} :: { [string]: boolean })
 	local offset = state(0)
+	local revision = state(0)
 	local filters: api.Filters? = nil
 	local was_enabled = false
 	local task: any = nil
@@ -210,6 +211,7 @@ return function(zeron: any, options: any?)
 		end
 		stop_request()
 		filters = current
+		revision:set(revision:peek() + 1)
 		table.clear(history)
 		table.clear(order)
 		first = 1
@@ -252,6 +254,7 @@ return function(zeron: any, options: any?)
 		cooling = cooling,
 		revealed = revealed,
 		offset = offset,
+		revision = revision,
 		load = load,
 		max_images = MAX_IMAGES,
 	}

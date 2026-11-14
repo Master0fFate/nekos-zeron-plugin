@@ -24,8 +24,10 @@ end
 
 return function(zeron: any, open_settings: () -> (), player: any?, exporter: any?)
 	local downloads = exporter or require("./download")(zeron)
-	local Gallery = ui.component(function(props: { close: (() -> ())?, panel: any? }): Node
-		local state = gallery_state(zeron)
+	local Gallery = ui.component(function(props: { close: (() -> ())?, panel: any?, embedded: boolean? }): Node
+		local state = if player then player.state else gallery_state(zeron)
+		local visibility = if player then player.attach() else nil
+		local Surface = if player then require("./image_surface")(zeron, player) else nil
 		local width = ui.use_state(0)
 		local busy_save = downloads.busy
 		local panel = props.panel
@@ -38,6 +40,13 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 		local format = zeron.setting("download_format")
 		local auto_more = zeron.setting("auto_more")
 		local nsfw = zeron.setting("enable_nsfw")
+		local at_end = ui.use_state(false)
+		ui.effect(function()
+			if auto_more:get() == true and mode:get() == "gallery" and at_end:get() then
+				local cancel = ui.after(0, function() state.load(true, true) end)
+				ui.on_cleanup(cancel)
+			end
+		end)
 
 		local function columns(w: number): number
 			return if w >= 990 then 4 elseif w >= 720 then 3 elseif w >= 470 then 2 else 1
@@ -59,6 +68,7 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 		end
 
 		local function next_image()
+			if player then player.command("next"); return end
 			local count = state.images:len()
 			local index = state.index:peek()
 			if index < count then
@@ -77,7 +87,7 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 				return true
 			end
 			return nsfw:get() == true and zeron.setting(image.rating):get() == true
-				and (hide:get() == false or state.revealed:get()[tostring(index)] == true)
+				and (hide:get() == false or state.revealed:get()[image.id] == true)
 		end
 
 		local function current_image(): api.Image?
@@ -105,12 +115,12 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 				h_full = true,
 				ui.presence(function()
 					return if not unlocked(image, index) then "hidden"
-						elseif not single and image.rating ~= "safe" and blur:get() ~= false and not state.revealed:get()[tostring(index)] then "blur"
+						elseif image.rating ~= "safe" and blur:get() ~= false and not state.revealed:get()[image.id] then "blur"
 						else "plain"
 				end, function(kind: string)
 					local reveal = function()
 						choose(index)
-						state.revealed:set_key(tostring(index), true)
+						state.revealed:set_key(image.id, true)
 					end
 					if kind == "hidden" then
 						return ui.column {
@@ -124,6 +134,7 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 						h_full = true,
 						overflow = "hidden",
 						ui.image {
+							id = `nekos-preview-{kind}`,
 							src = image.url,
 							w_full = true,
 							h_full = true,
@@ -132,8 +143,8 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 								return if aspect:get() ~= false then "contain" else "cover"
 							end,
 							blur = if kind == "blur" then 28 else 0,
-							on_error = function() failed:set(true) end,
-							on_load = function() failed:set(false) end,
+							on_error = function() failed:set(true); if player then player.failed(image.url) end end,
+							on_load = function() failed:set(false); if player then player.loaded(image.url) end end,
 							fallback = ui.presence(function() return failed:get() end, function(broken)
 								return placeholder(if broken then "Preview unavailable" else "Loading preview…", "gallery")
 							end, { w_full = true, h_full = true }),
@@ -163,7 +174,6 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 				border_color = function()
 					return if state.index:get() == number then "$accent" else "$border.subtle"
 				end,
-				bg = "$surface.sunken",
 				overflow = "hidden",
 				ui.div {
 					w_full = true,
@@ -227,6 +237,7 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 					end,
 					scrollbar = true,
 					offset = state.offset,
+					at_end = at_end,
 					overscan = 1,
 					ahead = 0,
 					on_end = function()
@@ -239,6 +250,7 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 		end
 
 		local function single_image(): Node
+			if Surface then return Surface {} end
 			return ui.presence(function()
 				local i = state.index:get()
 				local image = state.images:get()[i]
@@ -300,8 +312,19 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 			state.load(false)
 		end
 
+		if props.embedded then
+			return ui.column {
+				id="nekos-gallery",w_full=true,h_full=true,min_h=0,gap="$space.2",p="$space.2",
+				on_resize=function(size) local w=math.floor(size.w); if w>0 and w~=width:peek() then width:set(w) end end,
+				image_details(),
+				ui.div {grow=1,min_h=0,w_full=true,gallery_list()},
+				Button {"Load More",label="Load more images",size="xs",tone="ghost",disabled=function() return state.loading:get() or state.cooling:get() or state.images:len()>=state.max_images end,on_click=function() state.load(true) end},
+			}
+		end
+
 		return ui.column {
 			id = "nekos-gallery",
+			on_visible = visibility,
 			w_full = true,
 			h_full = true,
 			min_h = 0,
@@ -347,7 +370,6 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 			Text { "Nekos API content ratings may be inaccurate.", style = "caption", tone = "secondary", wrap = true },
 			ui.show(function() return state.images:len() > 0 end, ui.column {
 				w_full = true, gap = "$space.2", p = "$space.3", rounded = "$radius.lg",
-				bg = "$surface.sunken",
 				ui.row {
 					w_full = true, items = "center", gap = "$space.2", flex_wrap = true,
 					action("Download", "download", "secondary", save, function() return disabled() or busy_save:get() end),

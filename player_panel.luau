@@ -29,7 +29,7 @@ return function(zeron: any, player: any, exporter: any, open_settings: () -> ())
 				w_full = true, items = "center", p = "$space.6",
 				Settings.Page {
 					title = "Image panel",
-					description = "Anime images beside your work. All controls stay here.",
+					description = "Playback, filters, and image actions.",
 					trail_top = true,
 					trail = Button { "Open panel", label = "Open image panel", size = "sm", tone = "primary", on_click = function() player.open(panel) end },
 					Settings.Section {
@@ -64,7 +64,7 @@ return function(zeron: any, player: any, exporter: any, open_settings: () -> ())
 					},
 					Settings.Section {
 						Settings.Group { Settings.Row { label = "Filters & settings", description = "Ratings, tags, image fit, and download format.", on_click = open_settings } },
-						Text { "Resize the panel with Zeron’s divider. Close it with the tab’s close button. Playback pauses when the image panel is hidden.", style = "caption", tone = "secondary", wrap = true, px = Settings.inset() },
+						Text { "Resize the panel with Zeron’s divider. Close it with the tab’s close button. Playback pauses when all image views are hidden.", style = "caption", tone = "secondary", wrap = true, px = Settings.inset() },
 						Text { "Changes are saved automatically. Nekos API ratings may be inaccurate.", style = "caption", tone = "secondary", wrap = true, px = Settings.inset() },
 					},
 				},

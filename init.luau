@@ -8,7 +8,7 @@ local exporter = require("./download")(zeron)
 local settings = function() zeron.open({ settings = "plugin-" .. ID }) end
 local Gallery = require("./gallery")(zeron, settings, model, exporter)
 local Controls = require("./player_panel")(zeron, model, exporter, settings)
-local Image = require("./image_panel")(zeron, model)
+local Image = require("./image_panel")(zeron, model, Gallery, settings)
 local Workspace = require("./workspace")(Gallery, Controls, ui.state("nekos_view", "panel"))
 
 zeron.page {
