@@ -6,8 +6,7 @@ local Stepper = require("@ds/stepper")
 local Text = require("@ds/text")
 
 return function(zeron: any, player: any, exporter: any, open_settings: () -> ())
-	return function(panel: any?): Node
-		panel = panel or zeron.context("panel")
+	return function(): Node
 		local function command(label: string, action: string): Node
 			return Button {
 				label, label = label, size = "sm", tone = "ghost",
@@ -28,10 +27,10 @@ return function(zeron: any, player: any, exporter: any, open_settings: () -> ())
 			ui.column {
 				w_full = true, items = "center", p = "$space.6",
 				Settings.Page {
-					title = "Image panel",
+					title = "Image controls",
 					description = "Playback, filters, and image actions.",
 					trail_top = true,
-					trail = Button { "Open panel", label = "Open image panel", size = "sm", tone = "primary", on_click = function() player.open(panel) end },
+					trail = Button { "Open PiP", label = "Open image PiP", size = "sm", tone = "primary", on_click = player.open },
 					Settings.Section {
 						title = "Playback",
 						Settings.Group {
@@ -64,7 +63,7 @@ return function(zeron: any, player: any, exporter: any, open_settings: () -> ())
 					},
 					Settings.Section {
 						Settings.Group { Settings.Row { label = "Filters & settings", description = "Ratings, tags, image fit, and download format.", on_click = open_settings } },
-						Text { "Resize the panel with Zeron’s divider. Close it with the tab’s close button. Playback pauses when all image views are hidden.", style = "caption", tone = "secondary", wrap = true, px = Settings.inset() },
+						Text { "Drag the PiP title to move it. Drag the resize handle to change its size. Playback pauses when all image views are hidden.", style = "caption", tone = "secondary", wrap = true, px = Settings.inset() },
 						Text { "Changes are saved automatically. Nekos API ratings may be inaccurate.", style = "caption", tone = "secondary", wrap = true, px = Settings.inset() },
 					},
 				},

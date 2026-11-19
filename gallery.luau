@@ -24,13 +24,12 @@ end
 
 return function(zeron: any, open_settings: () -> (), player: any?, exporter: any?)
 	local downloads = exporter or require("./download")(zeron)
-	local Gallery = ui.component(function(props: { close: (() -> ())?, panel: any?, embedded: boolean? }): Node
+	local Gallery = ui.component(function(props: { close: (() -> ())? }): Node
 		local state = if player then player.state else gallery_state(zeron)
 		local visibility = if player then player.attach() else nil
 		local Surface = if player then require("./image_surface")(zeron, player) else nil
 		local width = ui.use_state(0)
 		local busy_save = downloads.busy
-		local panel = props.panel
 		local list_ref = ui.ref()
 		local mode = zeron.setting("mode")
 		local metadata = zeron.setting("metadata")
@@ -312,16 +311,6 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 			state.load(false)
 		end
 
-		if props.embedded then
-			return ui.column {
-				id="nekos-gallery",w_full=true,h_full=true,min_h=0,gap="$space.2",p="$space.2",
-				on_resize=function(size) local w=math.floor(size.w); if w>0 and w~=width:peek() then width:set(w) end end,
-				image_details(),
-				ui.div {grow=1,min_h=0,w_full=true,gallery_list()},
-				Button {"Load More",label="Load more images",size="xs",tone="ghost",disabled=function() return state.loading:get() or state.cooling:get() or state.images:len()>=state.max_images end,on_click=function() state.load(true) end},
-			}
-		end
-
 		return ui.column {
 			id = "nekos-gallery",
 			on_visible = visibility,
@@ -347,10 +336,7 @@ return function(zeron: any, open_settings: () -> (), player: any?, exporter: any
 			ui.row {
 				w_full = true, items = "center", gap = "$space.2", flex_wrap = true,
 				action("Refresh", "refresh", "primary", refresh, function() return state.loading:get() or state.cooling:get() end),
-				if player then action("Open panel", "arrow-up-right", "ghost", function()
-					if state.images:len() > 0 then player.present(state.images:peek(), state.index:peek()) end
-					player.open(panel)
-				end) else nil,
+				if player then action("Open PiP", "arrow-up-right", "ghost", player.open) else nil,
 				action("Next Image", "arrow-right", "secondary", next_image, function()
 					local count = state.images:len()
 					return count == 0 or (state.index:get() >= count

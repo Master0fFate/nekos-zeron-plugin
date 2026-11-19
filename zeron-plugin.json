@@ -1,8 +1,8 @@
 {
   "id": "nekos-api-anime-images",
   "name": "Nekos Anime Images",
-  "version": "2.1.0",
-  "description": "Native Nekos image panel, slideshow, and gallery for Zeron v3.",
+  "version": "2.2.0",
+  "description": "Floating Nekos picture-in-picture, slideshow, and gallery for Zeron v3.",
   "icon": "icon.svg",
   "entry": "init.luau",
   "permissions": [
@@ -142,14 +142,14 @@
         }
       ],
       "default": "gallery",
-      "description": "Applies to the gallery page and the image panel."
+      "description": "Choose the gallery layout. Picture-in-picture shows the selected image."
     },
     {
       "id": "auto_refresh",
       "kind": "switch",
       "section": "Display",
       "label": "Auto-refresh",
-      "description": "Fetch new images while a gallery or image panel is visible.",
+      "description": "Fetch new images while the gallery or picture-in-picture is visible.",
       "default": false
     },
     {
@@ -212,7 +212,7 @@
     {
       "id": "floating_autoplay",
       "kind": "switch",
-      "section": "Image panel",
+      "section": "Picture-in-picture",
       "label": "Start slideshow automatically",
       "description": "Starting playback default. Changes also start or stop playback now. Use Play/Pause for the saved live control.",
       "default": false
@@ -220,7 +220,7 @@
     {
       "id": "floating_interval",
       "kind": "number",
-      "section": "Image panel",
+      "section": "Picture-in-picture",
       "label": "Slideshow interval",
       "description": "Time each image stays on screen.",
       "min": 1,

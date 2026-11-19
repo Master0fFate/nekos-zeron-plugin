@@ -4,6 +4,7 @@ local build_state = require("./gallery_state")
 
 return function(zeron: any, request: ((string) -> any)?)
 	local viewers = ui.state("panel_viewers", 0)
+	local pip_open = ui.state("nekos_pip_open", false)
 	local visible = ui.computed(function() return viewers:get() > 0 end)
 	local state = build_state(zeron, { shared = true, enabled = visible, request = request })
 	local store = zeron.store("native_slideshow", {})
@@ -134,13 +135,8 @@ return function(zeron: any, request: ((string) -> any)?)
 			elseif action == "reveal" then local image = current(); if image and allowed(image) then state.revealed:set_key(image.id, true) end
 			end
 		end,
-		present = function(images: { api.Image }, index: number)
-			state.images:set(table.clone(images)); state.index:set(math.clamp(index, 1, math.max(1, #images)))
-			state.revealed:set({})
-		end,
-		open = function(panel: any)
-			if not panel then zeron.toast("Open Nekos Anime Images from the sidebar, then select Open panel."); return end
-			panel.open_tab { kind = "nekos-image", title = "Nekos images", icon = "gallery", data = { key = "nekos-image" } }
-		end,
+		pip_open = pip_open,
+		open = function() pip_open:set(true) end,
+		close = function() pip_open:set(false) end,
 	}
 end

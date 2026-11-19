@@ -1,6 +1,6 @@
 # Nekos Anime Images — Zeron v3
 
-Version **2.1.0**. A native image panel, slideshow, and gallery for Zeron's desktop plugin system, checked against **v0.3.4**.
+Version **2.2.0**. A floating image viewer, slideshow, and gallery for Zeron's desktop plugin system, checked against **v0.3.4**.
 
 **No Python, Pillow, Tkinter, npm packages, external programs, or new runtime dependencies.** The plugin uses Luau, Zeron's SDK, zgx image rendering, and Zeron's existing web view for image export. It does not request permission to run commands.
 
@@ -8,10 +8,10 @@ Version **2.1.0**. A native image panel, slideshow, and gallery for Zeron's desk
 
 Use the Zeron desktop app for your operating system. If you need to install it, get it from [Zeron Releases](https://github.com/zeronsh/zeron/releases). Open the `.dmg` on macOS, run the setup `.exe` on Windows, or extract the Linux archive and run its `install.sh`.
 
-1. Download the [source ZIP](https://github.com/Master0fFate/nekos-zeron-plugin/archive/refs/heads/main.zip) and extract it.
+1. Download the [v2.2.0 source ZIP](https://github.com/Master0fFate/nekos-zeron-plugin/archive/refs/tags/v2.2.0.zip) and extract it.
 2. In Zeron, go to **Settings → Plugins** and open the plugins folder.
 3. Disable the old plugin if it is installed. Copy the extracted folder into the plugins folder and name it `nekos-api-anime-images`. Replace the old folder in full. Keep `zeron-plugin.json` and `init.luau` at the top level of the plugin folder.
-4. If Zeron requires a signature, follow the steps below. Then enable **Nekos Anime Images** and review its permissions. Select it in the sidebar, then select **Open panel**.
+4. If Zeron requires a signature, follow the steps below. Then enable **Nekos Anime Images** and review its permissions. Select **Nekos Anime Images** in the sidebar, then select **Open PiP**.
 
 ### Sign the plugin if required
 
@@ -45,16 +45,15 @@ For a signed package that you can use in the **Install…** dialog, see `zeron p
 
 https://github.com/user-attachments/assets/60b6c285-b92c-43f2-b02c-90398676735f
 
-This 24-second simulated demo uses the plugin's native UI components, Nekos API images, and an original instrumental.
+This 24-second demo shows the previous sidebar layout and uses the plugin's native UI components, Nekos API images, and an original instrumental.
 
-## Native image panel
+## Picture-in-picture
 
-- **Open panel** opens a real Zeron panel tab. Use Zeron's divider to change its width and its tab close button to close it. This version does not create a separate desktop window.
-- The panel has a compact top toolbar: **Refresh**, **Previous**, **Next**, **Play/Pause**, and **Settings**. Status and **Reveal** appear below the toolbar. The image viewport has no background fill: empty space uses Zeron's panel surface.
-- Turn **Slideshow** on for playback in batch order, then repeat. Turn it off for a static image. Set **Change image every** to 1–3600 seconds. The timer starts after an image loads. A CDN request that stalls for 15 seconds is skipped during playback. The last loaded permitted image stays visible while the next one loads. Playback pauses when all image views are hidden. A one-image batch fetches another batch when its playback timer ends.
-- **Previous**, **Next**, and **Refresh** work from the control page. Refresh requests a new batch. Slideshow and interval changes are saved through `zeron.store`.
-- **View → Open Nekos Image Panel**, **View → Nekos Image Panel Controls**, and **View → Open Nekos Anime Images** open panel tabs in the current chat. With no chat context, use the Nekos sidebar page. The gallery command also uses **Ctrl+Shift+G** on Windows/Linux or **Cmd+Shift+G** on macOS.
-- The page and panel share one batch and selected image. The **Gallery / Single Image** setting changes both views immediately without another API request. **Open panel** opens the same selection beside your work.
+- Select **Open PiP** from the **Nekos Anime Images** page or gallery. You can also select **View → Open Nekos Picture-in-Picture**. The player starts in the lower-right corner of the Zeron window and stays open when you switch chats.
+- Drag the title to move the player. Drag the resize handle in the controls to change its size. Select **Close PiP** to close it. You can continue to use Zeron around the player.
+- The compact controls let you refresh, move between images, start or pause the slideshow, and open settings. The gallery and PiP share the current selection. PiP shows one image at a time.
+- Turn **Slideshow** on to play images in order and repeat. Set **Change image every** to 1–3600 seconds. The timer starts when the image loads. A request that stalls for 15 seconds is skipped during playback. The last permitted image stays visible as the next one loads. Playback pauses when all image views are hidden.
+- **View → Nekos Image Controls** and **View → Open Nekos Anime Images** still open the controls or gallery in a chat's panel. Use **Ctrl+Shift+G** on Windows and Linux or **Cmd+Shift+G** on macOS to open the gallery from a chat.
 
 ## Gallery and settings
 
@@ -64,10 +63,10 @@ Open **Gallery** for a responsive image grid or Single Image mode. Use **Refresh
 
 - **Enable NSFW** defaults to OFF. **Safe images** defaults to ON. All other ratings default to OFF. Turning the master switch off blocks `suggestive`, `borderline`, and `explicit`, even if their individual toggles remain selected. With no effective ratings selected, the plugin sends no request.
 - **Hide NSFW previews** and **Blur NSFW thumbnails** default to ON. Hide takes priority: protected images are not sent to the renderer until **Reveal image** is selected in Zeron. If Hide is off and Blur is on, protected previews are blurred.
-- A rating change clears old results and revealed states before loading a new batch. This also works while the image panel is hidden.
+- A rating change clears old results and revealed states before loading a new batch. This also works while the PiP player is closed.
 - **Nekos API ratings may be inaccurate.** A small tag block list skips some records that appear incorrectly marked Safe. It cannot detect all bad ratings.
 - Auto-refresh runs while the view is mounted and Zeron is visible. Auto-load more applies to the gallery grid. The shared batch holds at most 300 results. Duplicate history is bounded to 1,000 image records.
-- The saved setting IDs `floating_autoplay` and `floating_interval` are retained for upgrades. They now control the native panel's defaults. No floating-window code remains.
+- The saved setting IDs `floating_autoplay` and `floating_interval` are retained for upgrades. They control the PiP slideshow defaults.
 
 ## Image formats and downloads
 
@@ -91,8 +90,8 @@ The plugin handles invalid responses, empty results, network errors, a 15-second
 
 | Files | Purpose |
 | --- | --- |
-| `zeron-plugin.json`, `init.luau` | Native page/tab registration, commands, permissions, settings |
-| `slideshow.luau`, `image_panel.luau`, `image_surface.luau` | Shared playback, bounded image loading, toolbar, transparent viewport |
+| `zeron-plugin.json`, `init.luau` | Page and tab registration, commands, permissions, settings |
+| `slideshow.luau`, `image_pip.luau`, `image_surface.luau` | Shared playback, floating player, bounded image loading |
 | `player_panel.luau`, `workspace.luau` | Native Settings controls and view tabs |
 | `api.luau`, `gallery_state.luau`, `gallery.luau` | Filters, requests, metadata, gallery, and selected-batch transfer |
 | `download.luau`, `export_page.luau` | Built-in web view export and native Save dialog |
@@ -102,7 +101,9 @@ Removed: `python.luau`, `floating.luau`, `floating_worker.luau`, `download_worke
 
 ## Validation
 
-Passed for 2.1.0:
+The 2.2.0 checks cover Luau compilation, API filters and requests, export logic, and PiP geometry. The desktop UI suite includes a test for closing PiP and using the workspace while it is open.
+
+The following results are from 2.1.0:
 
 - Luau compilation and zgx lint: **0 errors, 0 warnings** in plugin source.
 - API rating gates, tags, limits, query encoding, metadata, empty/invalid payloads, and cooldown parsing.
@@ -117,14 +118,15 @@ Not verified: the packaged Zeron app on Windows/macOS, the platform Save dialog,
 Development checks, from the plugin folder:
 
 ```sh
-luau-compile --null *.luau tests/api.test.luau
+luau-compile --null *.luau tests/*.luau
 zgx lint .
 luau tests/api.test.luau
+luau tests/pip.test.luau
 node tests/export.test.cjs
 bash tests/run-ui.sh /path/to/zeron/apps/zgx/ui /path/to/zgx
 ```
 
-These are development tools only. Users need only Zeron. The screenshot below is a frame from the native zgx showcase with reviewed SFW images fetched from Nekos API. It is not a capture of the packaged Zeron app; Zeron supplies the surrounding sidebar, tab header, and divider.
+These are development tools only. Users need only Zeron. The screenshot below shows the 2.1.0 layout in the native zgx showcase with reviewed SFW images fetched from Nekos API. It is not a capture of the packaged Zeron app; Zeron supplies the surrounding sidebar, tab header, and divider.
 
 
 ![Native image panel and controls](docs/screenshots/native-panel.png)
